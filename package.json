@@ -59,5 +59,8 @@
   "bugs": {
     "url": "https://github.com/geut/network-setup/issues"
   },
-  "homepage": "https://github.com/geut/network-setup#readme"
+  "homepage": "https://github.com/geut/network-setup#readme",
+  "publishConfig": {
+    "access": "public"
+  }
 }
