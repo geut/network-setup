@@ -1,4 +1,4 @@
-const { NetworkSetup } = require('..')
+const { NetworkSetup, Peer, Connection } = require('..')
 
 test('basic', async () => {
   expect.assertions(9)
@@ -6,18 +6,16 @@ test('basic', async () => {
   const onPeer = jest.fn()
 
   const setup = new NetworkSetup({
-    onPeer (peerId) {
+    onPeer (node) {
       onPeer()
 
-      return {
-        extended: {
-          name: peerId
-        }
-      }
+      const peer = new Peer(node)
+      peer.name = node.id
+      return peer
     },
-    onConnection (fromPeer, toPeer) {
-      expect(fromPeer.id).toBe(fromPeer.extended.name)
-      expect(toPeer.id).toBe(toPeer.extended.name)
+    onConnection (_, fromPeer, toPeer) {
+      expect(fromPeer.id).toBe(fromPeer.name)
+      expect(toPeer.id).toBe(toPeer.name)
     }
   })
 
@@ -40,11 +38,11 @@ test('resource live', async () => {
   }
 
   const setup = new NetworkSetup({
-    onPeer () {
-      return peerFn
+    onPeer (node) {
+      return new Peer(node, peerFn)
     },
-    onConnection () {
-      return connectionFn
+    onConnection (link) {
+      return new Connection(link, connectionFn)
     }
   })
 

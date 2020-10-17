@@ -1,22 +1,30 @@
+/**
+ * @typedef { import("./network").Node } Node
+ */
+
 const assert = require('nanocustomassert')
 const { NanoresourcePromise } = require('nanoresource-promise/emitter')
 
 class Peer extends NanoresourcePromise {
   /**
    * @constructor
-   * @param {*} id
-   * @param {{ open: () => Promise, close: () => Promise, extended: object }} [data]
+   * @param {Node} node
+   * @param {object} [opts]
    */
-  constructor (id, data = {}) {
-    assert(id !== undefined, 'id required')
+  constructor (node, opts) {
+    assert(node && node.id !== undefined, 'node.id required')
 
-    const { open, close, extended } = data
-    super({ open, close })
+    super(opts)
 
-    /** @type {*} */
-    this.id = id
-    /** @type {object} */
-    this.extended = extended
+    /** @type {Node} */
+    this.ref = node
+  }
+
+  /**
+   * @type {*}
+   */
+  get id () {
+    return this.ref.id
   }
 }
 

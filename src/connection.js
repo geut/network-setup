@@ -2,30 +2,46 @@ const assert = require('nanocustomassert')
 const { NanoresourcePromise } = require('nanoresource-promise/emitter')
 
 /**
- * @typedef { import("./peer").Peer } Peer
+ * @typedef { import("./network").Link } Link
  */
 
 class Connection extends NanoresourcePromise {
   /**
    * @constructor
-   * @param {Peer} fromPeer
-   * @param {Peer} toPeer
-   * @param {{ open: () => Promise, close: () => Promise, extended: object }} [data]
+   * @param {Link} link
+   * @param {object} [opts]
    */
-  constructor (fromPeer, toPeer, data = {}) {
-    assert(fromPeer, 'fromPeer is required')
-    assert(toPeer, 'toPeer is required')
+  constructor (link, opts) {
+    assert(link, 'link is required')
+    assert(link.id !== undefined, 'link.id is required')
+    assert(link.fromId !== undefined, 'link.fromId is required')
+    assert(link.toId !== undefined, 'link.toId is required')
 
-    const { open, close, extended } = data
+    super(opts)
 
-    super({ open, close })
-
-    /** @type Peer */
-    this.fromPeer = fromPeer
-    /** @type Peer */
-    this.toPeer = toPeer
     /** @type {object} */
-    this.extended = extended
+    this.ref = link
+  }
+
+  /**
+   * @type {string}
+   */
+  get id () {
+    return this.ref.id
+  }
+
+  /**
+   * @type {*}
+   */
+  get fromId () {
+    return this.ref.fromId
+  }
+
+  /**
+   * @type {*}
+   */
+  get toId () {
+    return this.ref.toId
   }
 }
 

@@ -1,24 +1,37 @@
+/**
+ * @typedef Node
+ * @prop {*} id
+ * @prop {*} data
+ */
+
+/**
+ * @typedef Link
+ * @prop {string} id
+ * @prop {*} fromId
+ * @prop {*} toId
+ * @prop {*} data
+ */
+
+/**
+ * @callback OnPeer
+ * @param {Node} node
+ * @returns {Promise<Peer>}
+ */
+
+/**
+ * @callback OnConnection
+ * @param {Link} link
+ * @param {Peer} fromPeer
+ * @param {Peer} toPeer
+ * @returns {Promise<Connection>}
+ */
+
 const { EventEmitter } = require('events')
 const createGraph = require('ngraph.graph')
 const assert = require('nanocustomassert')
 
 const Peer = require('./peer')
 const Connection = require('./connection')
-
-/**
- * @callback OnPeer
- * @param {*} peerId
- * @param {object} data
- * @returns {Promise<PeerData>}
- */
-
-/**
- * @callback OnConnection
- * @param {Peer} fromPeer
- * @param {Peer} toPeer
- * @param {object} data
- * @returns {Promise<ConnectionData>}
- */
 
 class Network extends EventEmitter {
   /**
@@ -46,13 +59,11 @@ class Network extends EventEmitter {
         if (changeType === 'add') {
           let data
           if (node) {
-            const peer = this._onPeer(node.id, node.data)
-            data = node.data = peer instanceof Peer ? peer : new Peer(node.id, peer)
+            data = node.data = this._onPeer(node) || new Peer(node)
+            assert(data instanceof Peer, 'onPeer needs to return a Peer instance')
           } else {
-            const fromPeer = this.getPeer(link.fromId)
-            const toPeer = this.getPeer(link.toId)
-            const conn = this._onConnection(fromPeer, toPeer, link.data)
-            data = link.data = conn instanceof Connection ? conn : new Connection(fromPeer, toPeer, conn)
+            data = link.data = this._onConnection(link, this.getPeer(link.fromId), this.getPeer(link.toId)) || new Connection(link)
+            assert(data instanceof Connection, 'onConnection needs to return a Connection instance')
           }
 
           data.open().catch(err => {
