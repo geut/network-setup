@@ -1,11 +1,11 @@
-const generator = require('ngraph.generators')
-
-const Network = require('./network')
-
 /**
  * @typedef { import("./network").OnPeer } OnPeer
  * @typedef { import("./network").OnConnection } OnConnection
  */
+
+const generator = require('ngraph.generators')
+
+const Network = require('./network')
 
 class NetworkSetup {
   /**

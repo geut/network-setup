@@ -1,9 +1,9 @@
-const assert = require('nanocustomassert')
-const { NanoresourcePromise } = require('nanoresource-promise/emitter')
-
 /**
  * @typedef { import("./network").Link } Link
  */
+
+const assert = require('nanocustomassert')
+const { NanoresourcePromise } = require('nanoresource-promise/emitter')
 
 class Connection extends NanoresourcePromise {
   /**
