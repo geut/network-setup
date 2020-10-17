@@ -1,7 +1,7 @@
 # network-setup
 Create network simulations to test your peers and connections using [ngraph](https://github.com/anvaka/ngraph.graph)
 
-[![Build Status](https://travis-ci.com/geut/network-setup.svg?branch=master)](https://travis-ci.com/geut/network-setup)
+[![Build Status](https://travis-ci.com/geut/network-setup.svg?branch=main)](https://travis-ci.com/geut/network-setup)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
@@ -49,7 +49,7 @@ const setup = new NetworkSetup({
 
 ## <a name="contribute"></a> Contributing
 
-:busts_in_silhouette: Ideas and contributions to the project are welcome. You must follow this [guideline](https://github.com/geut/network-setup/blob/master/CONTRIBUTING.md).
+:busts_in_silhouette: Ideas and contributions to the project are welcome. You must follow this [guideline](https://github.com/geut/network-setup/blob/main/CONTRIBUTING.md).
 
 ## License
 
