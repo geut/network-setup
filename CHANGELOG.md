@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2.1.0 - 2020-10-19 [YANKED]
+
 ## 2.0.0 - 2020-10-17 [YANKED]
 
 ## 1.0.0 - 2020-10-16 [YANKED]
-[Unreleased]: https://github.com/geut/network-setup/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/geut/network-setup/compare/v2.1.0...HEAD
