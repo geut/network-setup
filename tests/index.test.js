@@ -75,3 +75,17 @@ test('resource live', async () => {
   expect(connectionFn.open).toHaveBeenCalledTimes(3)
   expect(connectionFn.close).toHaveBeenCalledTimes(3)
 })
+
+test('change id', async () => {
+  const setup = new NetworkSetup({
+    onPeer (node) {},
+    onConnection (_, fromPeer, toPeer) {},
+    onId (id) {
+      return id + 'changed'
+    }
+  })
+
+  const network = await setup.complete(2)
+  expect(network.peers.map(p => p.id)).toEqual(['0changed', '1changed'])
+  expect(network.connections.map(c => ({ fromId: c.fromId, toId: c.toId }))).toEqual([{ fromId: '0changed', toId: '1changed' }])
+})

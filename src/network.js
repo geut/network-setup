@@ -26,6 +26,12 @@
  * @returns {Promise<Connection>}
  */
 
+/**
+ * @callback OnId
+ * @param {*} id
+ * @returns {*}
+ */
+
 const { EventEmitter } = require('events')
 const createGraph = require('ngraph.graph')
 const assert = require('nanocustomassert')
@@ -43,7 +49,7 @@ class Network extends EventEmitter {
   constructor (opts = {}) {
     super()
 
-    const { onPeer, onConnection } = opts
+    const { onPeer, onConnection, onId = (id) => id } = opts
 
     assert(typeof onPeer === 'function', 'onPeer is required')
     assert(typeof onConnection === 'function', 'onConnection is required')
@@ -51,6 +57,7 @@ class Network extends EventEmitter {
     this.graph = createGraph({ multigraph: true })
     this._onPeer = onPeer
     this._onConnection = onConnection
+    this._onId = onId
 
     this.graph.on('changed', (changes) => {
       changes.forEach(change => {
@@ -121,7 +128,7 @@ class Network extends EventEmitter {
    * @returns {Peer|undefined}
    */
   getPeer (peerId) {
-    const peer = this.graph.getNode(peerId)
+    const peer = this.graph.getNode(this._onId(peerId))
     return peer && peer.data
   }
 
@@ -131,7 +138,7 @@ class Network extends EventEmitter {
    */
   getConnectionsFromPeer (peerId) {
     const connections = []
-    this.graph.forEachLinkedNode(peerId, function (_, link) {
+    this.graph.forEachLinkedNode(this._onId(peerId), function (_, link) {
       connections.push(link.data)
     })
     return connections
@@ -143,7 +150,7 @@ class Network extends EventEmitter {
    * @returns {Promise<Peer>}
    */
   async addPeer (peerId, data = {}) {
-    const node = this.graph.addNode(peerId, data)
+    const node = this.graph.addNode(this._onId(peerId), data)
     await node.data.open()
     return node.data
   }
@@ -153,7 +160,7 @@ class Network extends EventEmitter {
    * @returns {Promise}
    */
   async deletePeer (peerId) {
-    const node = this.graph.getNode(peerId)
+    const node = this.graph.getNode(this._onId(peerId))
     if (!node) return
 
     return node.data.close()
@@ -166,7 +173,7 @@ class Network extends EventEmitter {
    * @returns {Promise<Connection>}
    */
   async addConnection (fromId, toId, data = {}) {
-    const link = this.graph.addLink(fromId, toId, data)
+    const link = this.graph.addLink(this._onId(fromId), this._onId(toId), data)
     await link.data.open()
     return link.data
   }

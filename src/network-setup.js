@@ -1,6 +1,5 @@
 /**
- * @typedef { import("./network").OnPeer } OnPeer
- * @typedef { import("./network").OnConnection } OnConnection
+ * @typedef { import("./network") } Network
  */
 
 const generator = require('ngraph.generators')
@@ -11,13 +10,15 @@ class NetworkSetup {
   /**
    * @constructor
    * @param {object} opts
-   * @param {OnPeer} opts.onPeer
-   * @param {OnConnection} opts.onConnection
+   * @param {Network.OnPeer} opts.onPeer
+   * @param {Network.OnConnection} opts.onConnection
+   * @param {Network.OnId} opts.onId
    */
   constructor (opts = {}) {
-    const { onPeer, onConnection } = opts
+    const { onPeer, onConnection, onId } = opts
     this._onPeer = onPeer
     this._onConnection = onConnection
+    this._onId = onId
   }
 
   /**
@@ -27,7 +28,7 @@ class NetworkSetup {
    * @returns {Promise<Network>}
    */
   async generateFromGraph (graph) {
-    const network = new Network({ onPeer: this._onPeer, onConnection: this._onConnection })
+    const network = new Network({ onPeer: this._onPeer, onConnection: this._onConnection, onId: this._onId })
 
     const peers = []
     graph.forEachNode(node => {
