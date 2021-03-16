@@ -16,10 +16,13 @@
     "prepublishOnly": "npm test"
   },
   "dependencies": {
+    "mostly-minimal-spanning-tree": "^1.0.2",
     "nanocustomassert": "^1.0.0",
     "nanoresource-promise": "^2.0.0",
     "ngraph.generators": "^19.3.0",
-    "ngraph.graph": "^19.1.0"
+    "ngraph.graph": "^19.1.0",
+    "randombytes": "^2.1.0",
+    "streamx": "^2.10.2"
   },
   "devDependencies": {
     "@geut/chan": "^2.0.0",

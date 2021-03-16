@@ -2,7 +2,10 @@
  * @typedef { import("./network") } Network
  */
 
+const randomBytes = require('randombytes')
 const generator = require('ngraph.generators')
+const { Readable } = require('streamx')
+const MMST = require('mostly-minimal-spanning-tree')
 
 const Network = require('./network')
 
@@ -161,6 +164,48 @@ class NetworkSetup {
    */
   async wattsStrogatz (n, k, p) {
     return this.generateFromGraph(generator.wattsStrogatz(n, k, p))
+  }
+
+  /**
+   * mostly-minimal-spanning-tree
+   * https://github.com/RangerMauve/mostly-minimal-spanning-tree
+   *
+   * @param {number} size Nodes in the tree
+   * @param {Object} [opts]
+   * @param {number} [opts.sampleSize=10] The higher the sample size, the more likely it'll connect to "close" peers. However, if the sample size is the number of peers, it can have supernodes
+   * @param {number} [opts.percentFar=0.33] The higher the percentage the more redundant connections will exist, but the less likely it will be to have partitions
+   * @param {number} [opts.maxPeers=4] If we reach this many peers, start disconnecting new incoming connections
+   * @param {number} [opts.lookupTimeout=1000] How long to lookup peers fore before giving up and using what you have
+   * @returns {Promise<Network>}
+   */
+  async mmst (size, opts = {}) {
+    const network = new Network({ onPeer: this._onPeer, onConnection: this._onConnection, onId: id => id.toString('hex') })
+
+    for (let i = 0; i < size; i++) {
+      const id = randomBytes(32)
+      const idStr = id.toString('hex')
+
+      const mmst = new MMST({
+        id,
+        lookup: () => {
+          const peers = network.peers
+            .filter(peer => peer.id !== idStr)
+            .map(peer => Buffer.from(peer.id, 'hex'))
+
+          return Readable.from([peers])
+        },
+        connect: (to) => {
+          return network.addConnection(id, to)
+        },
+        ...opts
+      })
+
+      await network.addPeer(id, { mmst })
+
+      await mmst.run()
+    }
+
+    return network
   }
 }
 
