@@ -200,7 +200,10 @@ class NetworkSetup {
         ...opts
       })
 
-      await network.addPeer(id, { mmst })
+      const peer = await network.addPeer(id, { mmst })
+      peer.on('closed', () => {
+        mmst.destroy()
+      })
 
       await mmst.run()
     }
