@@ -181,8 +181,9 @@ class NetworkSetup {
   async mmst (size, opts = {}) {
     const network = new Network({ onPeer: this._onPeer, onConnection: this._onConnection, onId: id => id.toString('hex') })
 
-    for (let i = 0; i < size; i++) {
-      const id = randomBytes(32)
+    const oldAddPeer = network.addPeer.bind(network)
+
+    network.addPeer = async (id, data = {}) => {
       const idStr = id.toString('hex')
 
       const mmst = new MMST({
@@ -200,12 +201,16 @@ class NetworkSetup {
         ...opts
       })
 
-      const peer = await network.addPeer(id, { mmst })
+      const peer = await oldAddPeer(id, { ...data, mmst })
       peer.on('closed', () => {
         mmst.destroy()
       })
 
       await mmst.run()
+    }
+
+    for (let i = 0; i < size; i++) {
+      network.addPeer(randomBytes(32))
     }
 
     return network
