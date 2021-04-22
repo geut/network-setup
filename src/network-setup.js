@@ -195,8 +195,15 @@ class NetworkSetup {
 
           return Readable.from([peers])
         },
-        connect: (to) => {
-          return network.addConnection(id, to)
+        connect: async (to) => {
+          const connection = await network.addConnection(id, to)
+          const toPeer = network.getPeer(to)
+          if (!toPeer.mmst.shouldHandleIncoming()) {
+            connection.close()
+            throw new Error('max peers reached')
+          }
+          toPeer.mmst.handleIncoming(id, connection)
+          return connection
         },
         ...opts
       })
