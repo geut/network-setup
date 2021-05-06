@@ -1,6 +1,6 @@
 {
   "name": "@geut/network-setup",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "Create network simulations to test your peers and connections",
   "main": "index.js",
   "files": [
