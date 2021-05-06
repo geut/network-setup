@@ -208,7 +208,8 @@ class NetworkSetup {
         ...opts
       })
 
-      const peer = await oldAddPeer(id, { ...data, mmst })
+      const peer = await oldAddPeer(id, { ...data })
+      peer.mmst = mmst
       peer.on('closed', () => {
         mmst.destroy()
       })
@@ -217,7 +218,7 @@ class NetworkSetup {
     }
 
     for (let i = 0; i < size; i++) {
-      network.addPeer(randomBytes(32))
+      await network.addPeer(randomBytes(32))
     }
 
     return network
