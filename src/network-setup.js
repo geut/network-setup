@@ -6,6 +6,7 @@ const randomBytes = require('@geut/randombytes')
 const generator = require('ngraph.generators')
 const { Readable } = require('streamx')
 const MMST = require('mostly-minimal-spanning-tree')
+const b4a = require('b4a')
 
 const Network = require('./network')
 
@@ -179,19 +180,19 @@ class NetworkSetup {
    * @returns {Promise<Network>}
    */
   async mmst (size, opts = {}) {
-    const network = new Network({ onPeer: this._onPeer, onConnection: this._onConnection, onId: id => id.toString('hex') })
+    const network = new Network({ onPeer: this._onPeer, onConnection: this._onConnection, onId: id => b4a.toString(id, 'hex') })
 
     const oldAddPeer = network.addPeer.bind(network)
 
     network.addPeer = async (id, data = {}) => {
-      const idStr = id.toString('hex')
+      const idStr = b4a.toString(id, 'hex')
 
       const mmst = new MMST({
         id,
         lookup: () => {
           const peers = network.peers
             .filter(peer => peer.id !== idStr)
-            .map(peer => Buffer.from(peer.id, 'hex'))
+            .map(peer => b4a.from(peer.id, 'hex'))
 
           return Readable.from([peers])
         },

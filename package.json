@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@geut/randombytes": "^1.0.2",
+    "b4a": "^1.6.1",
     "mostly-minimal-spanning-tree": "^1.0.2",
     "nanocustomassert": "^1.0.0",
     "nanoresource-promise": "^3.2.0",
