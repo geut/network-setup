@@ -1,7 +1,7 @@
 # network-setup
 Create network simulations to test your peers and connections using [ngraph](https://github.com/anvaka/ngraph.graph)
 
-[![Build Status](https://travis-ci.com/geut/network-setup.svg?branch=main)](https://travis-ci.com/geut/network-setup)
+![Test Status](https://github.com/geut/network-setup/actions/workflows/test.yml/badge.svg)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 

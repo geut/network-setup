@@ -2,7 +2,7 @@
  * @typedef { import("./network") } Network
  */
 
-const randomBytes = require('randombytes')
+const randomBytes = require('@geut/randombytes')
 const generator = require('ngraph.generators')
 const { Readable } = require('streamx')
 const MMST = require('mostly-minimal-spanning-tree')

@@ -1,9 +1,11 @@
+const { test } = require('uvu')
+const assert = require('uvu/assert')
+const { spy } = require('tinyspy')
 const { NetworkSetup, Peer, Connection } = require('..')
 
 test('basic', async () => {
-  expect.assertions(9)
-
-  const onPeer = jest.fn()
+  const onPeer = spy()
+  const onConnection = spy()
 
   const setup = new NetworkSetup({
     onPeer (node) {
@@ -13,28 +15,30 @@ test('basic', async () => {
       peer.name = node.id
       return peer
     },
-    onConnection (_, fromPeer, toPeer) {
-      expect(fromPeer.id).toBe(fromPeer.name)
-      expect(toPeer.id).toBe(toPeer.name)
-    }
+    onConnection
   })
 
   const network = await setup.complete(3)
 
-  expect(network.peers.length).toBe(3)
-  expect(network.connections.length).toBe(3)
-  expect(onPeer).toHaveBeenCalledTimes(3)
+  const [, fromPeer, toPeer] = onConnection.calls[0]
+
+  assert.equal(fromPeer.id, fromPeer.name)
+  assert.equal(toPeer.id, toPeer.name)
+
+  assert.is(network.peers.length, 3)
+  assert.is(network.connections.length, 3)
+  assert.is(onPeer.callCount, 3)
 })
 
 test('resource live', async () => {
   const peerFn = {
-    open: jest.fn(),
-    close: jest.fn()
+    open: spy(),
+    close: spy()
   }
 
   const connectionFn = {
-    open: jest.fn(),
-    close: jest.fn()
+    open: spy(),
+    close: spy()
   }
 
   const setup = new NetworkSetup({
@@ -48,32 +52,32 @@ test('resource live', async () => {
 
   const network = await setup.complete(3)
 
-  expect(network.peers.map(p => p.id)).toEqual([0, 1, 2])
-  expect(network.connections.length).toBe(3)
+  assert.equal(network.peers.map(p => p.id), [0, 1, 2])
+  assert.is(network.connections.length, 3)
 
   let connections = network.getConnectionsFromPeer(0)
-  expect(connections.length).toBe(2)
+  assert.is(connections.length, 2)
 
   await network.deleteConnection(connections[0])
   connections = network.getConnectionsFromPeer(0)
-  expect(connections.length).toBe(1)
+  assert.is(connections.length, 1)
 
   await connections[0].close()
-  expect(network.getConnectionsFromPeer(0).length).toBe(0)
+  assert.is(network.getConnectionsFromPeer(0).length, 0)
 
-  expect(network.peers.length).toBe(3)
+  assert.is(network.peers.length, 3)
   await network.deletePeer(0)
-  expect(network.peers.length).toBe(2)
+  assert.is(network.peers.length, 2)
 
-  expect(network.connections.length).toBe(1)
+  assert.is(network.connections.length, 1)
   await network.deletePeer(1)
-  expect(network.peers.length).toBe(1)
-  expect(network.connections.length).toBe(0)
+  assert.is(network.peers.length, 1)
+  assert.is(network.connections.length, 0)
 
-  expect(peerFn.open).toHaveBeenCalledTimes(3)
-  expect(peerFn.close).toHaveBeenCalledTimes(2)
-  expect(connectionFn.open).toHaveBeenCalledTimes(3)
-  expect(connectionFn.close).toHaveBeenCalledTimes(3)
+  assert.is(peerFn.open.callCount, 3)
+  assert.is(peerFn.close.callCount, 2)
+  assert.is(connectionFn.open.callCount, 3)
+  assert.is(connectionFn.close.callCount, 3)
 })
 
 test('change id', async () => {
@@ -86,6 +90,8 @@ test('change id', async () => {
   })
 
   const network = await setup.complete(2)
-  expect(network.peers.map(p => p.id)).toEqual(['0changed', '1changed'])
-  expect(network.connections.map(c => ({ fromId: c.fromId, toId: c.toId }))).toEqual([{ fromId: '0changed', toId: '1changed' }])
+  assert.equal(network.peers.map(p => p.id), ['0changed', '1changed'])
+  assert.equal(network.connections.map(c => ({ fromId: c.fromId, toId: c.toId })), [{ fromId: '0changed', toId: '1changed' }])
 })
+
+test.run()

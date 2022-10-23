@@ -3,7 +3,7 @@
  */
 
 const assert = require('nanocustomassert')
-const { NanoresourcePromise } = require('nanoresource-promise/emitter')
+const { NanoresourcePromise } = require('nanoresource-promise/emitter2')
 
 class Peer extends NanoresourcePromise {
   /**

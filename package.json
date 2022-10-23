@@ -8,36 +8,27 @@
     "index.js"
   ],
   "scripts": {
-    "start": "node index.js",
-    "test": "jest --passWithNoTests",
+    "test": "uvu",
     "posttest": "npm run lint",
-    "lint": "xd-ns \"**/*.js\"",
-    "version": "chan release --allow-yanked ${npm_package_version} && git add .",
+    "lint": "standard",
     "prepublishOnly": "npm test"
   },
   "dependencies": {
+    "@geut/randombytes": "^1.0.2",
     "mostly-minimal-spanning-tree": "^1.0.2",
     "nanocustomassert": "^1.0.0",
-    "nanoresource-promise": "^2.0.0",
+    "nanoresource-promise": "^3.2.0",
     "ngraph.generators": "^19.3.0",
     "ngraph.graph": "^19.1.0",
-    "randombytes": "^2.1.0",
     "streamx": "^2.10.2"
   },
   "devDependencies": {
-    "@geut/chan": "^2.0.0",
-    "@geut/xd": "^1.5.0",
-    "standard": "^14.3.1",
-    "jest": "^24.8.0"
-  },
-  "jest": {
-    "testMatch": [
-      "**/tests/**/*.test.js"
-    ]
+    "standard": "^17.0.0",
+    "tinyspy": "^1.0.2",
+    "uvu": "^0.5.6"
   },
   "standard": {
     "env": [
-      "jest",
       "node",
       "browser"
     ]
