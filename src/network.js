@@ -74,7 +74,7 @@ class Network extends EventEmitter {
           }
 
           data.open().catch(err => {
-            process.nextTick(() => {
+            queueMicrotask(() => {
               this.emit('error', err)
             })
           })
@@ -92,7 +92,7 @@ class Network extends EventEmitter {
 
         if (changeType === 'remove') {
           (node || link).data.close().catch(err => {
-            process.nextTick(() => {
+            queueMicrotask(() => {
               this.emit('error', err)
             })
           })
